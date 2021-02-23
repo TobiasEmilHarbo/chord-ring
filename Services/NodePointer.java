@@ -38,11 +38,8 @@ public class NodePointer {
     return this._address;
   }
 
-  public void findSuccessor(int data) throws IOException {
-    System.out.println("findSuccessor " + this._address + "/successors/?id=" + data);
-
-    String successor = this.http.get(this._address + "/successors/?id=" + data);
-
+  public void findSuccessor(NodePointer node) throws IOException {
+    String successor = this.http.get(this._address + "/successors/?id=" + node.getId() + "&address=" + node.getAddress());
     System.out.println("successor" + successor);
   }
 

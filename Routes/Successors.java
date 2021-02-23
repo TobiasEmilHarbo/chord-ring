@@ -24,7 +24,12 @@ public class Successors extends Route {
     System.out.print("N#" + this.node.getId() + ": ");
     System.out.println("Successors GET");
 
-    NodePointer successor = this.node.findSuccessor(Integer.parseInt(query.get("id")));
+    int id = Integer.parseInt(query.get("id"));
+    String address = query.get("address");
+
+    NodePointer node = new NodePointer(id, address);
+
+    NodePointer successor = this.node.findSuccessor(node);
 
     exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
     

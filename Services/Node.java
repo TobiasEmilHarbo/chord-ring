@@ -138,9 +138,9 @@ public class Node {
     this.server.createContext("/predecessors", new Routes.Predecessors(this));
   }
 
-  public NodePointer findSuccessor(int id) throws IOException {
+  public NodePointer findSuccessor(NodePointer node) throws IOException {
     System.out.print("N#" + this.getId() + ": ");
-    System.out.println("find successor for " + id);
+    System.out.println("find successor for " + node.getId());
     /*
       if id ∈ (n, successor] then
         return successor
@@ -150,12 +150,12 @@ public class Node {
         return n0.find_successor(id)
     */
     if (!this._predecessor.pointsTo(this)) {
-      this._predecessor.findSuccessor(id);
+      this._predecessor.findSuccessor(node);
     }
 
     Interval interval = Interval.withClosedEnd(this.getId(), this.getSuccessor().getId());
 
-    if (interval.includes(id)) {
+    if (interval.includes(node.getId())) {
       return this.getSuccessor();
     }
     return null;

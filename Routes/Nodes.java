@@ -20,7 +20,7 @@ public class Nodes extends Route {
   public void post(HttpExchange exchange, String data) throws IOException {
 
     NodePointer joiningNode = NodePointer.fromJson(data);
-    NodePointer newSuccessor = this.node.findSuccessor(joiningNode.getId());
+    NodePointer newSuccessor = this.node.findSuccessor(joiningNode);
 
     System.out.print("N#" + this.node.getId() + ": ");
     System.out.println("Successor found for #" + joiningNode.getId() + ": #" + newSuccessor.getId());
