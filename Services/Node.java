@@ -96,12 +96,11 @@ public class Node {
     System.out.println("Successor found: " + successor.getId());
 
     this.setSuccessor(successor);
-
-    // this.stabilize();
   }
 
   public void stabilize() throws IOException {
     System.out.print("N#" + this.getId() + ": ");
+    System.out.println("Stabilize");
     /*
       x = successor.predecessor
       if x ∈ (n, successor) then
@@ -117,9 +116,6 @@ public class Node {
     } else {
       successorsPredecessor = this.getPredecessor();
     }
-
-    System.out.print("N#" + this.getId() + ": ");
-    System.out.println("Stabilize. successorsPredecessor: #" + successorsPredecessor.getId());
 
     Interval interval = Interval.asOpen(this.getId(), this.getSuccessor().getId());
 
