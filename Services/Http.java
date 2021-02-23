@@ -22,9 +22,9 @@ public class Http {
 		//add request header
 		httpClient.setRequestProperty("User-Agent", "Mozilla/5.0");
 
-		int responseCode = httpClient.getResponseCode();
-		System.out.println("\nSending 'GET' request to URL : " + url);
-		System.out.println("Response Code : " + responseCode);
+		// int responseCode = httpClient.getResponseCode();
+		// System.out.println("\nSending 'GET' request to URL : " + url);
+		// System.out.println("Response Code : " + responseCode);
 
 		try (BufferedReader in = new BufferedReader(
 						new InputStreamReader(httpClient.getInputStream()))) {
@@ -37,10 +37,8 @@ public class Http {
 			}
 
 			//print result
-			System.out.println(response.toString());
+			return response.toString();
 		}
-
-		return "";
 	}
 
   public String post(String url, String data) throws IOException {

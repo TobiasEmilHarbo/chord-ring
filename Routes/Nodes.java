@@ -27,6 +27,7 @@ public class Nodes extends Route {
 
     if(newSuccessor.pointsTo(this.node)) {
       this.node.setPredecessor(joiningNode);
+      joiningNode.notify(this.node);
       this.node.stabilize();
     }
     

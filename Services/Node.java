@@ -4,25 +4,26 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sun.net.httpserver.HttpServer;
 
 public class Node {
-  private int id;
+  private int _id;
   private int bit;
   private Http http;
   private HttpServer server;
-  private NodePointer pointer;
+  private NodePointer _pointer;
   private NodePointer _predecessor;
   private ArrayList<NodePointer> fingerTable;
 
   public Node(String host, int port, int bit, Http http) throws IOException {
-    this.id = port;
+    this._id = port;
     this.bit = bit;
     this.http = http;
 
-    this.pointer = new NodePointer(this.id, host + ":" + port);
-    this._predecessor = this.pointer;
-    
+    this._pointer = new NodePointer(this._id, host + ":" + port);
+    this._predecessor = this._pointer;
+
     this.initializeFingerTable();
     this.initializeServer(port);
   }
@@ -32,7 +33,7 @@ public class Node {
   }
 
   public int getId() {
-    return id;
+    return _id;
   }
 
   public void setSuccessor(NodePointer successor) {
@@ -61,57 +62,57 @@ public class Node {
 
     this.fingerTable = new ArrayList<NodePointer>(this.bit);
     for (int i = 0; i < this.bit; i++) {
-      // System.out.println("Fingers" + ((this.id + Math.pow(2, i-1)) % Math.pow(2, this.bit)));
-      this.fingerTable.add(i, this.pointer);
+      // System.out.println("Fingers" + ((this.id + Math.pow(2, i-1)) % Math.pow(2,
+      // this.bit)));
+      this.fingerTable.add(i, this._pointer);
     }
   }
- 
-  // private int getHash(String str) {
-	// 	final int p = 16777619;
-	// 	int hash = (int) 2166136261L;
-	// 	for (int i = 0; i < str.length(); i++)
-	// 		hash = (hash ^ str.charAt(i)) * p;
-	// 	hash += hash << 13;
-	// 	hash ^= hash >> 7;
-	// 	hash += hash << 3;
-	// 	hash ^= hash >> 17;
-	// 	hash += hash << 5;
 
-	// 	// If the calculated value is negative, take its absolute value.
-	// 	if (hash < 0)
-	// 		hash = Math.abs(hash);
-	// 	return hash;
+  // private int getHash(String str) {
+  // final int p = 16777619;
+  // int hash = (int) 2166136261L;
+  // for (int i = 0; i < str.length(); i++)
+  // hash = (hash ^ str.charAt(i)) * p;
+  // hash += hash << 13;
+  // hash ^= hash >> 7;
+  // hash += hash << 3;
+  // hash ^= hash >> 17;
+  // hash += hash << 5;
+
+  // // If the calculated value is negative, take its absolute value.
+  // if (hash < 0)
+  // hash = Math.abs(hash);
+  // return hash;
   // }
 
   public void connectToNetwork(String address) throws IOException {
-    
-    System.out.print("N#" + this.getId() + ": ");
-    System.out.println("Connect to network via "+ address);
 
-    NodePointer successor = NodePointer.fromJson(
-      this.http.post(address + "/nodes", this.pointer.toJson())
-      );
+    System.out.print("N#" + this.getId() + ": ");
+    System.out.println("Connect to network via " + address);
+
+    NodePointer successor = NodePointer.fromJson(this.http.post(address + "/nodes", this._pointer.toJson()));
 
     System.out.print("N#" + this.getId() + ": ");
     System.out.println("Successor found: " + successor.getId());
 
     this.setSuccessor(successor);
-    // this.stabilize();
 
-    // nodePointer.notify(this.pointer);
+    // this.stabilize();
   }
 
   public void stabilize() throws IOException {
     System.out.print("N#" + this.getId() + ": ");
-    // x = successor.predecessor
-    // if x ∈ (n, successor) then
-    //     successor := x
-    // successor.notify(n)
+    /*
+      x = successor.predecessor
+      if x ∈ (n, successor) then
+          successor := x
+      successor.notify(n)
+    */
 
     NodePointer successor = this.getSuccessor();
     NodePointer successorsPredecessor;
 
-    if(!successor.pointsTo(this)) {
+    if (!successor.pointsTo(this)) {
       successorsPredecessor = successor.getPredecessor();
     } else {
       successorsPredecessor = this.getPredecessor();
@@ -119,9 +120,10 @@ public class Node {
 
     System.out.print("N#" + this.getId() + ": ");
     System.out.println("Stabilize. successorsPredecessor: #" + successorsPredecessor.getId());
-    // (this.start < key && key <= maxId
-      // || 0 <= key && key < this.stop);
-    if(this.getId() < successorsPredecessor.getId() && successorsPredecessor.getId() <= 256 || 0 <= successorsPredecessor.getId() && successorsPredecessor.getId() < this.getSuccessor().getId()) {
+
+    Interval interval = Interval.asOpen(this.getId(), this.getSuccessor().getId());
+
+    if (interval.includes(successorsPredecessor.getId())) {
       this.setSuccessor(successorsPredecessor);
     }
   }
@@ -134,47 +136,53 @@ public class Node {
   }
 
   private void setupEndpoints() {
+    this.server.createContext("/", new Routes.Index(this));
     this.server.createContext("/nodes", new Routes.Nodes(this));
     this.server.createContext("/successors", new Routes.Successors(this));
     this.server.createContext("/predecessors", new Routes.Predecessors(this));
   }
 
-  // public void addNode(String data) throws IOException {
-  //   System.out.print("N#" + this.id() + ": ");
-  //   System.out.println("add node " + data);
-
-  //   if(!this.predecessor.pointsTo(this)) {
-  //     this.predecessor.findSuccessor(data);
-  //   }
-  //   else {
-  //     NodePointer np = this.findSuccessor(data);
-  //     System.out.println("successor found " + np.id());
-  //   }
-  // }
-
   public NodePointer findSuccessor(int id) throws IOException {
     System.out.print("N#" + this.getId() + ": ");
     System.out.println("find successor for " + id);
-
-    if(!this._predecessor.pointsTo(this)) {
+    /*
+      if id ∈ (n, successor] then
+        return successor
+      else
+        // forward the query around the circle
+        n0 := closest_preceding_node(id)
+        return n0.find_successor(id)
+    */
+    if (!this._predecessor.pointsTo(this)) {
       this._predecessor.findSuccessor(id);
     }
 
-    // if id ∈ (n, successor] then
-      // return successor
+    Interval interval = Interval.withClosedEnd(this.getId(), this.getSuccessor().getId());
 
-    if(id > this.id && id <= 256 || 0 <= id && id <= this.getSuccessor().getId()) {
-      return this.getSuccessor(); 
+    if (interval.includes(id)) {
+      return this.getSuccessor();
     }
     return null;
   }
 
-  public void notify(NodePointer pointer) {
-    // if predecessor is nil or n'∈(predecessor, n) then
-    // predecessor := n'
-    if(pointer.getId() > this._predecessor.getId() || id < this.getId()) {
-      this.setPredecessor(pointer);
+  public void notify(NodePointer potentialPredecessor) {
+    /*
+      if predecessor is nil or n'∈(predecessor, n) then
+      predecessor := n'
+    */
+
+    System.out.print("N#" + this.getId() + ": ");
+    System.out.println("Notification from #" + potentialPredecessor.getId());
+
+    Interval interval = Interval.asOpen(this._predecessor.getId(), this.getId());
+
+    if (interval.includes(potentialPredecessor.getId())) {
+      this.setPredecessor(potentialPredecessor);
     }
+  }
+
+  public String toJson() throws JsonProcessingException {
+    return this._pointer.toJson();
   }
 }
   

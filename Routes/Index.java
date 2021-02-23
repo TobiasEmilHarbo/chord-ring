@@ -20,6 +20,26 @@ public class Index extends Route {
   public void get(HttpExchange exchange, Map<String, String> query) throws IOException {  
     exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
     OutputStream responseBody = exchange.getResponseBody();
-    responseBody.write(("Node#"+this.node.getId()).getBytes());
+
+    String data = 
+        "<html><body>" 
+      + "<h2>"
+      + "Node#"+this.node.getId()
+      + "</h2>"
+      + "\n"
+      + "\n"
+      + "Successor: "
+      + "<a href=\"" + this.node.getSuccessor().getAddress() + "\">"
+      + "#" + this.node.getSuccessor().getId()
+      + "</a>"
+      + "<br/>"
+      + "Predecessor: "
+      + "<a href=\"" + this.node.getPredecessor().getAddress() + "\">"
+      + "#" + this.node.getPredecessor().getId()
+      + "</a>"
+      + "</body></html>"
+      ;
+
+    responseBody.write(data.getBytes());
   }
 }

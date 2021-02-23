@@ -34,6 +34,10 @@ public class NodePointer {
     return this._id;
   }
 
+  public String getAddress() {
+    return this._address;
+  }
+
   public void findSuccessor(int data) throws IOException {
     System.out.println("findSuccessor " + this._address + "/successors/?id=" + data);
 
@@ -46,8 +50,8 @@ public class NodePointer {
     return NodePointer.fromJson(this.http.get(this._address + "/predecessors/"));
   }
 
-  public void notify(NodePointer pointer) throws JsonProcessingException, IOException {
-    // this.http.post(this.address + "/predecessors/", pointer.toJson());
+  public void notify(Node node) throws JsonProcessingException, IOException {
+    this.http.post(this._address + "/predecessors/", node.toJson());
   }
 
   public Boolean pointsTo(Node node) {
