@@ -21,8 +21,10 @@ public class Successors extends Route {
   @Override
   public void get(HttpExchange exchange, Map<String, String> query) throws IOException {
     
+    long stamp = System.currentTimeMillis();
+
     System.out.print("N#" + this.node.getId() + ": ");
-    System.out.println("Successors GET");
+    System.out.println("Successors GET "+ stamp);
 
     int id = Integer.parseInt(query.get("id"));
     String address = query.get("address");
@@ -35,5 +37,7 @@ public class Successors extends Route {
     
     OutputStream responseBody = exchange.getResponseBody();
     responseBody.write(successor.toJson().getBytes());
+
+    System.out.println("END GET "+ stamp);
   }
 }

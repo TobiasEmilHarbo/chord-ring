@@ -23,7 +23,7 @@ public class Http {
 		httpClient.setRequestProperty("User-Agent", "Mozilla/5.0");
 
 		// int responseCode = httpClient.getResponseCode();
-		// System.out.println("\nSending 'GET' request to URL : " + url);
+		System.out.println("Sending 'GET' request to URL: " + url);
 		// System.out.println("Response Code : " + responseCode);
 
 		try (BufferedReader in = new BufferedReader(
@@ -36,7 +36,6 @@ public class Http {
 					response.append(line);
 			}
 
-			//print result
 			return response.toString();
 		}
 	}
@@ -46,6 +45,8 @@ public class Http {
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 		con.setRequestMethod("POST");
 		con.setRequestProperty("User-Agent", USER_AGENT);
+
+		System.out.println("Sending 'POST' request to URL: " + url);
 
 		// For POST only - START
 		con.setDoOutput(true);

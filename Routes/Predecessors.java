@@ -19,15 +19,31 @@ public class Predecessors extends Route {
 
   @Override
   public void get(HttpExchange exchange, Map<String, String> query) throws IOException {
+
+    long stamp = System.currentTimeMillis();
+
+    System.out.print("N#" + this.node.getId() + ": ");
+    System.out.println("Predecessor GET " + stamp);
+
     String predecessor = this.node.getPredecessor().toJson();
     exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, predecessor.length());
     OutputStream responseBody = exchange.getResponseBody();
     responseBody.write(predecessor.getBytes());
+
+    System.out.println("END GET " + stamp); 
   }
 
   @Override
   public void post(HttpExchange exchange, String data) throws IOException {
+
+    long stamp = System.currentTimeMillis();
+
+    System.out.print("N#" + this.node.getId() + ": ");
+    System.out.println("Predecessor POST " + stamp);
+    
     this.node.notify(NodePointer.fromJson(data));
     exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+
+    System.out.println("END POST " + stamp); 
   }
 }

@@ -96,6 +96,11 @@ public class Node {
     System.out.println("Successor found: " + successor.getId());
 
     this.setSuccessor(successor);
+    // NodePointer predecessor = successor.getPredecessor();
+    // this.setPredecessor(predecessor);
+
+    // this.getSuccessor().notifyOf(this);
+    this.stabilize();
   }
 
   public void stabilize() throws IOException {
@@ -121,6 +126,10 @@ public class Node {
 
     if (interval.includes(successorsPredecessor.getId())) {
       this.setSuccessor(successorsPredecessor);
+    }
+
+    if (!successor.pointsTo(this)) {
+      successor.notifyOf(this);
     }
   }
 
@@ -149,19 +158,21 @@ public class Node {
         n0 := closest_preceding_node(id)
         return n0.find_successor(id)
     */
-    if (!this._predecessor.pointsTo(this)) {
-      this._predecessor.findSuccessor(node);
-    }
+    // if (!this._predecessor.pointsTo(this)) {
+    //   this._predecessor.findSuccessor(node);
+    // }
 
     Interval interval = Interval.withClosedEnd(this.getId(), this.getSuccessor().getId());
 
     if (interval.includes(node.getId())) {
       return this.getSuccessor();
     }
+
+    System.out.println("FORWARD QUERY AROUND THE CIRCLE");
     return null;
   }
 
-  public void notify(NodePointer potentialPredecessor) {
+  public void notify(NodePointer potentialPredecessor) throws IOException {
     /*
       if predecessor is nil or n'∈(predecessor, n) then
       predecessor := n'
@@ -172,7 +183,7 @@ public class Node {
 
     Interval interval = Interval.asOpen(this._predecessor.getId(), this.getId());
 
-    if (interval.includes(potentialPredecessor.getId())) {
+    if (interval.includes(potentialPredecessor.getId())) { //if null
       this.setPredecessor(potentialPredecessor);
     }
   }

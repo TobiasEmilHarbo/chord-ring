@@ -47,7 +47,7 @@ public class NodePointer {
     return NodePointer.fromJson(this.http.get(this._address + "/predecessors/"));
   }
 
-  public void notify(Node node) throws JsonProcessingException, IOException {
+  public void notifyOf(Node node) throws JsonProcessingException, IOException {
     this.http.post(this._address + "/predecessors/", node.toJson());
   }
 
