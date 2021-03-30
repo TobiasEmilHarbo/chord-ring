@@ -85,6 +85,20 @@ public class Node {
   // return hash;
   // }
 
+  // public void join(String address) throws IOException {
+  //   NodePointer hookupNode = new NodePointer(address);
+
+  //   NodePointer successor = hookupNode.findSuccessor(this._pointer);
+  // }
+
+  // public NodePointer findSuccessor2() {
+  //   this.findPreddecessor();
+  // }
+
+  // public NodePointer findPredecessor() {
+
+  // }
+
   public void connectToNetwork(String address) throws IOException {
 
     System.out.print("N#" + this.getId() + ": ");

@@ -43,18 +43,18 @@ public class Nodes extends Route {
     System.out.println("END Nodes POST " + stamp);
   }
 
-  // @Override
-  // public void get(HttpExchange exchange, Map<String, String> query) throws IOException {
+  @Override
+  public void get(HttpExchange exchange, Map<String, String> query) throws IOException {
     
-  //   long stamp = System.currentTimeMillis();
+    long stamp = System.currentTimeMillis();
 
-  //   System.out.print("N#" + this.node.getId() + ": ");
-  //   System.out.println("Successors GET "+ stamp);
+    System.out.print("N#" + this.node.getId() + ": ");
+    System.out.println("Successors GET "+ stamp);
 
-  //   this.node.stabilize();
+    this.node.stabilize();
 
-  //   exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
     
-  //   System.out.println("END GET "+ stamp);
-  // }
+    System.out.println("END GET "+ stamp);
+  }
 }

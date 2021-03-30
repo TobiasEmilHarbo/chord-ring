@@ -18,6 +18,11 @@ public class NodePointer {
     this(pointer.getId(), pointer.getAddress());
   }
 
+  public NodePointer(String address) {
+    this.http = new Http();
+    this._address = address;
+  }
+
   public NodePointer(int id, String address) {
     this(id, address, new Http());
   }
@@ -62,5 +67,9 @@ public class NodePointer {
 
   public String toJson() throws JsonProcessingException {
     return new ObjectMapper().writeValueAsString(this._pointer);
+  }
+
+  public void stabilize() throws IOException {
+    this.http.get(this._address + "/nodes/");
   }
 }

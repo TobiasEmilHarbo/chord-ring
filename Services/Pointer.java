@@ -9,7 +9,6 @@ public class Pointer {
   private String address;
 
   public Pointer() {}
-
   public Pointer(int id, String address) {
     this.id = id;
     this.address = address;
